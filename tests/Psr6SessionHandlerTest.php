@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of php-cache\doctrine-bridge package.
+ * This file is part of php-cache\session-handler package.
  *
  * (c) 2015-2015 Aaron Scherer <aequasi@gmail.com>, Tobias Nyholm <tobias.nyholm@gmail.com>
  *
@@ -40,7 +40,7 @@ class Psr6SessionHandlerTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $this->mock   = m::mock(CacheItemPoolInterface::class);
+        $this->mock    = m::mock(CacheItemPoolInterface::class);
         $this->handler = new Psr6SessionHandler($this->mock);
 
         $this->itemMock = m::mock(CacheItemInterface::class);
@@ -68,16 +68,13 @@ class Psr6SessionHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testRead()
     {
-
     }
 
     public function testWrite()
     {
-
     }
 
     public function testDestroy()
     {
-
     }
 }
