@@ -122,4 +122,15 @@ class Psr6SessionHandler implements \SessionHandlerInterface
     {
         return $this->cache->getItem($this->prefix.$sessionId);
     }
+    
+    /**
+     * Set the session time to live
+     * 
+     * @param int $ttl Time to live
+     * @return void
+     */
+    public function setTtl($ttl)
+    {
+        $this->ttl = (int) $ttl;
+    }
 }
