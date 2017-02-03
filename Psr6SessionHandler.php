@@ -90,8 +90,8 @@ class Psr6SessionHandler implements \SessionHandlerInterface
     public function write($sessionId, $data)
     {
         $item = $this->getCacheItem($sessionId);
-        $item->set($data)
-            ->expiresAfter($this->ttl);
+        $item->set($data);
+        $item->expiresAfter($this->ttl);
 
         return $this->cache->save($item);
     }
@@ -121,5 +121,16 @@ class Psr6SessionHandler implements \SessionHandlerInterface
     private function getCacheItem($sessionId)
     {
         return $this->cache->getItem($this->prefix.$sessionId);
+    }
+    
+    /**
+     * Set the session time to live
+     * 
+     * @param int $ttl Time to live
+     * @return void
+     */
+    public function setTtl($ttl)
+    {
+        $this->ttl = (int) $ttl;
     }
 }

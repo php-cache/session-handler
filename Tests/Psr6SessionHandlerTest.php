@@ -12,7 +12,7 @@
 namespace Cache\SessionHandler\Tests;
 
 use Cache\SessionHandler\Psr6SessionHandler;
-use Mockery as m;
+use PHPUnit_Framework_MockObject_MockObject as mock;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
@@ -27,12 +27,12 @@ class Psr6SessionHandlerTest extends \PHPUnit_Framework_TestCase
     private $handler;
 
     /**
-     * @type m\MockInterface|CacheItemPoolInterface
+     * @type mock|CacheItemPoolInterface
      */
     private $mock;
 
     /**
-     * @type m\MockInterface|CacheItemInterface
+     * @type mock|CacheItemInterface
      */
     private $itemMock;
 
@@ -40,10 +40,14 @@ class Psr6SessionHandlerTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $this->mock    = m::mock(CacheItemPoolInterface::class);
+        $this->mock    = $this->getMockBuilder(CacheItemPoolInterface::class)->getMock();
         $this->handler = new Psr6SessionHandler($this->mock);
 
-        $this->itemMock = m::mock(CacheItemInterface::class);
+        $this->itemMock = $this->getMockBuilder(CacheItemInterface::class)->getMock();
+        $this->mock->expects($this->any())
+                   ->method('getItem')
+                   ->with('psr6ses_sessionID')
+                   ->will($this->returnValue($this->itemMock));
     }
 
     public function testConstructor()
@@ -72,9 +76,38 @@ class Psr6SessionHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testWrite()
     {
+        $handler = $this->handler;
+
+        $item = $this->itemMock;
+        $item->expects($this->once())
+            ->method('expiresAfter')
+            ->with(86400);
+
+        $item->expects($this->once())
+             ->method('set')
+             ->with(['data']);
+
+        $this->mock->expects($this->once())
+                   ->method('save')
+                   ->with($item);
+
+        $handler->write('sessionID', ['data']);
     }
 
     public function testDestroy()
     {
+    }
+
+    public function testSetTtl()
+    {
+        $handler = $this->handler;
+        $handler->setTtl(3);
+
+        $item = $this->itemMock;
+        $item->expects($this->once())
+              ->method('expiresAfter')
+              ->with(3);
+
+        $handler->write('sessionID', 'data');
     }
 }
